@@ -1,3 +1,4 @@
+This project is based on the [admin dashboard project](https://github.com/safak/youtube/tree/react-admin) by Lama Dev.
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
