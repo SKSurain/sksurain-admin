@@ -4,10 +4,50 @@ import Chart from "../../components/chart/Chart"
 import { productData } from "../../dummyData"
 import { Publish } from "@material-ui/icons";
 import { useSelector } from 'react-redux'
+import { useEffect, useMemo, useState } from "react";
+import { userRequest } from "../../requestMethods";
+
 export default function Product() {
     const location = useLocation();
     const productId = location.pathname.split("/")[2];
+    const [productStats, setProductStats] = useState([]);
     const product = useSelector((state) => state.product.products.find(product => product._id === productId));
+
+    const MONTHS = useMemo(() =>
+        [
+            "JAN",
+            "FEB",
+            "MAR",
+            "APR",
+            "MAY",
+            "JUN",
+            "JUL",
+            "AUG",
+            "SEP",
+            "OCT",
+            "NOV",
+            "DEC"
+        ], []);
+
+    useEffect(() => {
+        const getStats = async () => {
+            try {
+                const res = await userRequest.get('orders/income?pid=' + productId);
+                console.log(res)
+                res.data.map((item) => {
+                    setProductStats((prev) => [
+                        ...prev,
+                        { name: MONTHS[item._id - 1], Sales: item.total },
+                    ])
+                })
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        getStats();
+    }, [productId, MONTHS]);
+    console.log(productStats)
+
     return (
         <div className="product">
             <div className="productTitleContainer">
@@ -18,7 +58,7 @@ export default function Product() {
             </div>
             <div className="productTop">
                 <div className="productTopLeft">
-                    <Chart data={productData} dataKey="Sales" title="Sales Performance" />
+                    <Chart data={productStats} dataKey="Sales" title="Sales Performance" />
                 </div>
                 <div className="productTopRight">
                     <div className="productInfoTop">
